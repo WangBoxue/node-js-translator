@@ -3,8 +3,12 @@ var superagent = require('superagent');
 var cheerio = require('cheerio');
 
 var app = express();
+
+app.set('port', (process.env.PORT || 5001))
+
 app.get('/', function (request, response) {
 	console.log('hello world');
+	response.send('hello world');
 });
 app.get('/:word', function (request, response, callback) {
 	console.log('translating ' + request.params.word + '...');
@@ -18,4 +22,6 @@ app.get('/:word', function (request, response, callback) {
 		});
 	console.log('translation finished');
 });
-app.listen(4321, function() {console.log('listen on port 4321');});
+app.listen(app.get('port'), function() {
+  console.log('listen on port ' + app.get('port'));
+});
