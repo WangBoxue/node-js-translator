@@ -1,10 +1,9 @@
 {
-  "name": "translator",
+  "name": "node-js-translator",
   "version": "1.0.0",
-  "description": "translate english to chinese using youdao dict",
+  "description": "translator using youdao dict",
   "main": "index.js",
   "author": "wang boxue",
-  "license": "MIT",
   "dependencies": {
     "superagent": "~1.2.0",
     "cheerio": "~0.19.0"
