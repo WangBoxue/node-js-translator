@@ -23,6 +23,6 @@ app.get('/:word', function (request, response, callback) {
 		});
 	console.log('translation finished');
 });
-app.listen(5001, function() {
+app.listen(app.get('port'), function() {
   console.log('listen on port ' + app.get('port'));
 });

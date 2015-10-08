@@ -1,12 +1,10 @@
 {
-  "name": "lesson3",
-  "version": "1.0.1",
-  "description": "",
+  "name": "translator",
+  "version": "1.0.0",
+  "description": "translate english to chinese using youdao dict",
   "main": "index.js",
-  "scripts": {
-  },
-  "author": "",
-  "license": "BSD-2-Clause",
+  "author": "wang boxue",
+  "license": "MIT",
   "dependencies": {
     "express": "~4.13.1",
     "superagent": "~1.2.0",
