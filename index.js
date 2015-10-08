@@ -3,6 +3,9 @@ var superagent = require('superagent');
 var cheerio = require('cheerio');
 
 var app = express();
+app.get('/', function (request, response) {
+	console.log('hello world');
+});
 app.get('/:word', function (request, response, callback) {
 	console.log('translating ' + request.params.word + '...');
 	superagent.get('http://dict.youdao.com/search?q=' + request.params.word)
