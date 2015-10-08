@@ -1,28 +1,16 @@
-var express = require('express');
 var superagent = require('superagent');
 var cheerio = require('cheerio');
-
-var app = express();
-
-app.set('port', (process.env.PORT || 5001))
-
-app.get('/', function (request, response) {
-	console.log('hello world');
-	response.send('hello world');
-});
-app.get('/:word', function (request, response, callback) {
-	if (request.params.word === 'favicon.ico') { return; }
-	console.log('translating ' + request.params.word + '...');
-	superagent.get('http://dict.youdao.com/search?q=' + request.params.word)
-		.end(function (err, resource){
-			if (err)
-				return callback(err);
-			var $ = cheerio.load(resource.text);
-			var topics = [];
-			response.send($('.trans-container').first().children('ul').text());
-		});
-	console.log('translation finished');
-});
-app.listen(app.get('port'), function() {
-  console.log('listen on port ' + app.get('port'));
+var word = process.argv[2] || '';
+if (word === '') {
+	console.log('Usage: node translator.js WORD');
+	return;
+}
+superagent.get('http://dict.youdao.com/search?q=' + word)
+.end(function (err, resource){
+	if (err)
+		return err;
+	var $ = cheerio.load(resource.text);
+	$('.trans-container').first().children('ul').children().each(function (idx, element) {
+		console.log($(element).text().trim().replace(/\s+/g, ' '));
+	});
 });
