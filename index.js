@@ -11,6 +11,7 @@ app.get('/', function (request, response) {
 	response.send('hello world');
 });
 app.get('/:word', function (request, response, callback) {
+	if (request.params.word === 'favicon.ico') { return; }
 	console.log('translating ' + request.params.word + '...');
 	superagent.get('http://dict.youdao.com/search?q=' + request.params.word)
 		.end(function (err, resource){
