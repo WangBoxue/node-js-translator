@@ -33,6 +33,10 @@ function fetch(word) {
 	    result.forEach(function (translation) {
 		console.log(translation);
 	    });
+            if (result.length === 0) {
+                console.log('not found');
+                return;
+            }
 	    var stmt = db.prepare("insert into words(word, translation) values (?, ?)");
 	    stmt.run(word, result.join(','));
   	    stmt.finalize();
