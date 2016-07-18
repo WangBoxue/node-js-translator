@@ -8,37 +8,53 @@ var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(process.argv[2]);
 
 var word = process.argv[3];
-db.all('select translation from words where word="' + word + '"', function (err, rows) {
+db.all('select translation from words where word="' + word + '"', function(err, rows) {
     if (err) {
         console.log(err);
-    } else  if (rows && rows.length > 0) {
-	rows[0].translation.split(',').forEach(function (translation) {console.log(translation);});
+    } else if (rows && rows.length > 0) {
+        rows[0].translation.split(',').forEach(function(translation) {
+            console.log(translation);
+        });
     } else {
-	fetch(word);
+        fetch(word);
     }
 });
 
 function fetch(word) {
-    superagent.get('http://dict.youdao.com/search?q=' + word)
-        .end(function (err, resource){
-	    if (err) {
+    superagent.get('http://dict.youdao.com/w/' + encodeURIComponent(word))
+        .end(function(err, resource) {
+            if (err) {
                 console.log(err);
-	    	return;
+                return;
             }
-	    var $ = cheerio.load(resource.text);
-	    var result = [];
-	    $('.trans-container').first().children('ul').children().each(function (idx, element) {
-	 	result.push($(element).text().trim().replace(/\s+/g, ' '));
-	    });
-	    result.forEach(function (translation) {
-		console.log(translation);
-	    });
+
+            var $ = cheerio.load(resource.text);
+            var result = [];
+            $('.trans-container').first().children('ul').children().each(function(idx, element) {
+                var $elm = $(element);
+                if ($elm.hasClass('wordGroup')) { // chinese to english
+                    var line = "";
+                    $elm.children('span').each(function (i, e) {
+                        if ($(e).hasClass('contentTitle')) {
+                            line += $(e).children('a').first().text() + ", ";
+                        } else {
+                            line += $(e).text() + " ";
+                        }
+                    });
+                    result.push(line);
+                } else { // english to chinese
+                    result.push($elm.text().trim().replace(/\s+/g, ' '));
+                }
+            });
+            result.forEach(function(translation) {
+                console.log(translation);
+            });
             if (result.length === 0) {
                 console.log('not found');
                 return;
             }
-	    var stmt = db.prepare("insert into words(word, translation) values (?, ?)");
-	    stmt.run(word, result.join(','));
-  	    stmt.finalize();
-    });
+            var stmt = db.prepare("insert into words(word, translation) values (?, ?)");
+            stmt.run(word, result.join(','));
+            stmt.finalize();
+        });
 }
